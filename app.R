@@ -2,6 +2,7 @@ library(shiny)
 
 prod_codes <- setNames(products$prod_code, products$title)
 
+# Define the UI controls
 ui <- fluidPage(
   fluidRow(
     column(6,
@@ -18,9 +19,33 @@ ui <- fluidPage(
   )
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-
+# Define server logic
+server <- function(input, output, session) {
+  selected <- reactive(injuries %>% filter(prod_code == input$code))
+  
+  output$diag <- renderTable(
+    selected() %>% count(diag, wt = weight, sort = TRUE)
+  )
+  output$body_part <- renderTable(
+    selected() %>% count(body_part, wt = weight, sort = TRUE)
+  )
+  output$location <- renderTable(
+    selected() %>% count(location, wt = weight, sort = TRUE)
+  )
+  
+  summary <- reactive({
+    selected() %>%
+      count(age, sex, wt = weight) %>%
+      left_join(population, by = c("age", "sex")) %>%
+      mutate(rate = n / population * 1e4)
+  })
+  
+  output$age_sex <- renderPlot({
+    summary() %>%
+      ggplot(aes(age, n, colour = sex)) +
+      geom_line() +
+      labs(y = "Estimated number of injuries")
+  }, res = 96)
 }
 
 # Run the application 
