@@ -31,3 +31,22 @@ summary %>%
   ggplot(aes(age, n, colour = sex)) + 
   geom_line() + 
   labs(y = "Estimated number of injuries")
+
+# Compare the number of people injured with the total population and calculating an injury rate
+summary <- selected %>% 
+  count(age, sex, wt = weight) %>% 
+  left_join(population, by = c("age", "sex")) %>% 
+  mutate(rate = n / population * 1e4)
+
+summary
+
+# Plot the rate
+summary %>% 
+  ggplot(aes(age, rate, colour = sex)) + 
+  geom_line(na.rm = TRUE) + 
+  labs(y = "Injuries per 10,000 people")
+
+# Look at some randon narratives
+selected %>% 
+  sample_n(10) %>% 
+  pull(narrative)
