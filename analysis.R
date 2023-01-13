@@ -46,7 +46,7 @@ summary %>%
   geom_line(na.rm = TRUE) + 
   labs(y = "Injuries per 10,000 people")
 
-# Look at some randon narratives
+# Look at some random narratives
 selected %>% 
   sample_n(10) %>% 
   pull(narrative)
