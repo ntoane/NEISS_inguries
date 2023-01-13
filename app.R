@@ -5,8 +5,11 @@ prod_codes <- setNames(products$prod_code, products$title)
 # Define the UI controls
 ui <- fluidPage(
   fluidRow(
-    column(6,
-           selectInput("code", "Product", choices = prod_codes)
+    column(8,
+           selectInput("code", "Product",
+                       choices = setNames(products$prod_code, products$title),
+                       width = "100%"
+      )
     )
   ),
   fluidRow(
